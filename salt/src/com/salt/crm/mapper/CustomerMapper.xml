@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.salt.crm.mapper.CustomerMapper">
+	<!-- 总数 -->
+	<select id="customerCountByQueryVo" parameterType="QueryVo"
+		resultType="Integer">
+		select count(*) from customer
+		<where>
+			<if test="custName != null and custName != ''">
+				cust_name like "%"#{custName}"%"
+			</if>
+			<if test="custSource != null and custSource != ''">
+				and cust_source = #{custSource}
+			</if>
+			<if test="custIndustry != null and custIndustry != ''">
+				and cust_industry = #{custIndustry}
+			</if>
+			<if test="custLevel != null and custLevel != ''">
+				and cust_level = #{custLevel}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 结果集 -->
+	<select id="selectCustomerListByQueryVo" parameterType="QueryVo"
+		resultType="Customer">
+		select * from customer
+		<where>
+			<if test="custName != null and custName != ''">
+				cust_name like "%"#{custName}"%"
+			</if>
+			<if test="custSource != null and custSource != ''">
+				and cust_source = #{custSource}
+			</if>
+			<if test="custIndustry != null and custIndustry != ''">
+				and cust_industry = #{custIndustry}
+			</if>
+			<if test="custLevel != null and custLevel != ''">
+				and cust_level = #{custLevel}
+			</if>
+		</where>
+		limit #{startRow},#{size}
+	</select>
+	
+	<!-- 通过ID查询客户 -->
+	<select id="selectCustomerById" parameterType="Integer"
+		resultType="Customer">
+		select * from customer
+		<where>
+			cust_id = #{id}
+		</where>
+	</select>
+	
+	<!-- 修改客户通过ID -->
+	<update id="updateCustomerById" parameterType="Customer">
+		update customer 
+		<set>
+			<if test="cust_name != null">
+				cust_name = #{cust_name},
+			</if>
+			<if test="cust_linkman != null">
+				cust_linkman = #{cust_linkman}
+			</if>
+		</set>
+		<where>
+			cust_id = #{cust_id}
+		</where>
+	</update>
+		
+	<!-- 通过ID删除客户 -->
+	<delete id="deleteCustomerById" parameterType="Integer">
+		delete from customer where cust_id = #{value}
+	</delete>
+	
+	<!-- 增加客户 -->
+	<insert id="insertCustomer" parameterType="CustomerVo">
+		<selectKey keyProperty="cust_id" order="AFTER" resultType="java.lang.Long">
+	        SELECT LAST_INSERT_ID()
+	    </selectKey>
+	    <if test="custName != null and custName != ''">
+	    	insert into customer(cust_name,cust_source,cust_industry,cust_level) value(#{custName},#{custSource},#{custIndustry},#{custLevel})
+	    </if>
+	</insert>
+</mapper>
